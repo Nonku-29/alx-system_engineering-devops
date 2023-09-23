@@ -1,26 +1,20 @@
 #!/usr/bin/python3
+"""Script that, using the GitHub REST API, for a given user,
+   returns information about his/her repositories."""
 import requests
+from sys import argv
 
-def get_employee_todo_progress(employee_id):
-    # Make request to API
-    response = requests.get(f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
+if __name__ == '__main__':
+    # Get the user response
+    appEndpoint = 'https://api.github.com'
+    userResponse = requests.get(appEndpoint + '/users/' + argv[1] + '/repos').json()
 
-    # Parse response
-    todos = response.json()
-    total_tasks = len(todos)
-    done_tasks = [todo for todo in todos if todo["completed"]]
-    num_done_tasks = len(done_tasks)
-    employee_name = todos[0]["userId"]
+    # Get repository names and descriptions
+    repoNames = [repo['name'] for repo in userResponse]
+    repoDescriptions = [repo['description'] for repo in userResponse]
 
-    # Get user name from API
-    user_response = requests.get(f"https://jsonplaceholder.typicode.com/users/{employee_id}")
-    user = user_response.json()
-    employee_name = user["name"]
+    print('User {} has the following repositories:'
+          .format(argv[1]))
 
-    # Print progress report
-    print(f"Employee {employee_name} is done with tasks ({num_done_tasks}/{total_tasks}):")
-    for task in done_tasks:
-        print(f"\t{task['title']}")
-
-# Example usage
-get_employee_todo_progress(1)
+    for i in range(len(repoNames)):
+        print('\t{}: {}'.format(repoNames[i], repoDescriptions[i]))
