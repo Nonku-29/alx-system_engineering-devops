@@ -13,8 +13,8 @@ if __name__ == '__main__':
     repoNames = [repo['name'] for repo in userResponse]
     repoDescriptions = [repo['description'] for repo in userResponse]
 
-    print('User {} has the following repositories:'
-          .format(argv[1]))
+    print('The user {} has the following repositories:'.format(argv[1]))
 
     for i in range(len(repoNames)):
-        print('\t{}: {}'.format(repoNames[i], repoDescriptions[i]))
+        print('{}. {}'.format(i+1, repoNames[i]))
+        print('\t{}'.format(repoDescriptions[i] if repoDescriptions[i] else 'No description provided.'))
