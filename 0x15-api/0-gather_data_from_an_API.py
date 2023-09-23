@@ -1,20 +1,21 @@
 #!/usr/bin/python3
-"""Script that, using the GitHub REST API, for a given user,
-   returns information about his/her repositories."""
+"""Script that, using this REST API, for a given employee ID,
+   returns information about his/her TODO list progress."""
 import requests
 from sys import argv
 
 if __name__ == '__main__':
-    # Get the user response
-    appEndpoint = 'https://api.github.com'
-    userResponse = requests.get(appEndpoint + '/users/' + argv[1] + '/repos').json()
+    # Get the employee respose
+    appEndpoint = 'https://jsonplaceholder.typicode.com'
+    userResponse = requests.get(appEndpoint + '/users/' + argv[1]).json()
 
-    # Get repository names and descriptions
-    repoNames = [repo['name'] for repo in userResponse]
-    repoDescriptions = [repo['description'] for repo in userResponse]
+    # Get the sum number of tasks
+    todos = requests.get(appEndpoint + '/todos?userId=' + argv[1]).json()
 
-    print('The user {} has the following repositories:'.format(argv[1]))
+    # Get completed tasks plus titles
+    tasksTitle = [todo['title'] for todo in todos if todo['completed']]
 
-    for i in range(len(repoNames)):
-        print('{}. {}'.format(i+1, repoNames[i]))
-        print('\t{}'.format(repoDescriptions[i] if repoDescriptions[i] else 'No description provided.'))
+    print('Employee {} is done with tasks({}/{}):'
+          .format(userResponse['name'], len(tasksTitle), len(todos)))
+
+    [print('\t {}'.format(title)) for title in tasksTitle]
