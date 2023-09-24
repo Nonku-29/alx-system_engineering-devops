@@ -1,23 +1,27 @@
 #!/usr/bin/python3
+<<<<<<< HEAD
+=======
+"""Accessing a REST API for todo lists of employees"""
+
+>>>>>>> b3cc64e95d7dae88a3decd6a6cb316582fc1fca9
 import requests
-import csv
+import sys
 
-def export_employee_todo_csv(employee_id):
-    # Make request to API
-    response = requests.get(f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
 
-    # Parse response
-    todos = response.json()
-    user_response = requests.get(f"https://jsonplaceholder.typicode.com/users/{employee_id}")
-    user = user_response.json()
-    employee_name = user["username"]
+if __name__ == '__main__':
+    employeeId = sys.argv[1]
+    baseUrl = "https://jsonplaceholder.typicode.com/users"
+    url = baseUrl + "/" + employeeId
 
-    # Write to CSV file
-    with open(f"{employee_id}.csv", mode="w", newline="") as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
-        for todo in todos:
-            writer.writerow([todo["userId"], employee_name, todo["completed"], todo["title"]])
+    response = requests.get(url)
+    username = response.json().get('username')
 
-# Example usage
-export_employee_todo_csv(1)
+    todoUrl = url + "/todos"
+    response = requests.get(todoUrl)
+    tasks = response.json()
+
+    with open('{}.csv'.format(employeeId), 'w') as file:
+        for task in tasks:
+            file.write('"{}","{}","{}","{}"\n'
+                       .format(employeeId, username, task.get('completed'),
+                               task.get('title')))
